@@ -11,7 +11,7 @@ def loaddb(filename):
 
     # chargement de notre jeu de données
     import yaml
-    books = yaml.load(open(filename))
+    books = yaml.safe_load(open(filename))
 
     # import des modèles
     from .models import Author , Book
