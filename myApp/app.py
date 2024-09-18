@@ -6,6 +6,7 @@ import os.path
 app = Flask(__name__)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 bootstrap = Bootstrap5(app)
+app.config['SECRET_KEY'] = "2cf09b58-e3a6-497f-a14c-c9ed405bcd91"
 
 def mkpath(p):
     return os.path.normpath (
