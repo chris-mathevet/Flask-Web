@@ -1,4 +1,4 @@
-FLASK_APP=tuto
+FLASK_APP=myApp
 FLASK_DEBUG=True
 
 
