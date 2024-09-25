@@ -28,3 +28,6 @@ def get_book_by_id(id:int):
 
 def get_author_by_id(id:int):
     return Author.query.get_or_404(id)
+
+def get_books_by_author(id:int):
+    return Author.query.get_or_404(id).books.all()
