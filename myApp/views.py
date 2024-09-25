@@ -41,7 +41,7 @@ def edit_author(id):
 def save_author():
     a = None
     f = AuthorForm()
-    if f.validate_on_submit ():
+    if f.validate_on_submit():
         a = get_author_by_id(int(f.id.data))
         a.name = f.name.data
         db.session.commit()

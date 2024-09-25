@@ -2,7 +2,7 @@
 {% block content %}
 <h1>Edit author: {{ author.name }}</h1>
 <form method="POST" action="{{ url_for('save_author') }}">
-    {{ form. hidden_tag () }}
+    {{ form.hidden_tag () }}
     <div class = 
         {% if form.name.errors %}
         "form-group has-error"
