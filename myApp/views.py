@@ -27,5 +27,5 @@ def edit_author (id):
     a = get_author_by_id(id)
     f = AuthorForm(id=a.id, name=a.name)
     return render_template (
-        "edit -author.html",
+        "edit-author.html",
         author=a, form=f)
