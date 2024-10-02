@@ -14,8 +14,8 @@ def loaddb(filename):
     books = yaml.safe_load(open(filename))
 
     # import des modèles
-    from .models import Author , Book
-    
+    from .models import Author, Book
+
     # première passe: création de tous les auteurs
     authors = {}
     for b in books:
@@ -29,10 +29,15 @@ def loaddb(filename):
     # deuxième passe: création de tous les livres
     for b in books:
         a = authors[b["author"]]
-        o = Book(price = b["price"],
-                title = b["title"],
-                url = b["url"] ,
-                img = b["img"] ,
-                author_id = a.id)
+        o = Book(price=b["price"],
+                 title=b["title"],
+                 url=b["url"],
+                 img=b["img"],
+                 author_id=a.id)
         db.session.add(o)
     db.session.commit()
+
+@app.cli.command()
+def syncdb():
+    """Creates all missing tables."""
+    db.create_all()

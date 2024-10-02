@@ -1,9 +1,9 @@
 {% extends "baseBS.html" %}
 {% block content %}
-<h1>Edit author: {{ author.name }}</h1>
-<form method="POST" action="{{ url_for('save_author') }}">
+<h1>..</h1>
+<form method="POST" action="{{ url_for('save_new_author') }}">
     {{ form.hidden_tag () }}
-    <h1>Edit author: {{ author.name }}</h1>
+    <h1>Add author</h1>
     <div class = 
         {% if form.name.errors %}
         "form-group has-error"

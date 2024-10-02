@@ -12,7 +12,7 @@ class AuthorForm(FlaskForm):
 @app.route("/")
 def home():
     return render_template(
-        "home.html", 
+        "home.html",
         title="My Books !",
         books=get_sample())
 
@@ -47,6 +47,38 @@ def save_author():
         db.session.commit()
         return redirect(url_for("one_author", id=a.id))
     a = get_author_by_id(int(f.id.data))
+    return render_template("edit-author.html", author=a, form=f)
+# add,author
+
+@app.route("/add/author/")
+def add_author():
+    f = AuthorForm(id=None, name="")
     return render_template (
-        "edit-author.html",
-        author=a, form=f)
+        "add-author.html",
+        form=f)
+
+@app.route("/add/save/author/", methods =("POST",))
+def save_new_author(new=False):
+    print(new)
+    a = None
+    f = AuthorForm()
+    if f.validate_on_submit():
+        a = Author(name=f.name.data)
+        db.session.add(a)
+        db.session.commit()
+        return redirect(url_for("one_author", id=a.id))
+    return render_template("edit-author.html", author=a, form=f)
+
+# @app.route("/save/author/", methods =("POST",))
+# def save_author():
+#     a = None
+#     f = AuthorForm()
+#     if f.validate_on_submit():
+#         a = get_author_by_id(int(f.id.data))
+#         a.name = f.name.data
+#         db.session.commit()
+#         return redirect(url_for("one_author", id=a.id))
+#     a = get_author_by_id(int(f.id.data))
+#     return render_template (
+#         "edit-author.html",
+#         author=a, form=f)
