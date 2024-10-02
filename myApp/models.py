@@ -41,3 +41,11 @@ def get_author_by_id(id:int):
 
 def get_books_by_author(id:int):
     return Author.query.get_or_404(id).books.all()
+
+def get_user_by_username(username:str):
+    return User.query.get_or_404(username)
+
+from .app import login_manager
+@login_manager.user_loader
+def load_user(username):
+    return User.query.get(username)
