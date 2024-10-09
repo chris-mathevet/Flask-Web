@@ -26,7 +26,7 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(64))
 
     def __repr__(self):
-        return self.username
+        return self.username + self.password
     
     def get_id(self):
         return self.username

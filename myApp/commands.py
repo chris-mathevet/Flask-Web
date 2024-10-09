@@ -65,5 +65,5 @@ def passwd(username, password):
     m = sha256()
     m.update(password.encode())
     u = get_user_by_username(username)
-    u.password = password
+    u.password = m.hexdigest()
     db.session.commit()
