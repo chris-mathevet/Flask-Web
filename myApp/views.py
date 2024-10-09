@@ -9,7 +9,7 @@ from .models import User
 from hashlib import sha256
 from flask_login import login_user , current_user
 from flask import request
-from flask_login import logout_user
+from flask_login import logout_user, login_required
 
 class AuthorForm(FlaskForm):
     id = HiddenField ("id")
@@ -66,6 +66,7 @@ def one_author(id):
         books = get_books_by_author(int(id)))
 
 @app.route("/edit/author/<int:id>")
+@login_required
 def edit_author(id):
     a = get_author_by_id(id)
     f = AuthorForm(id=a.id, name=a.name)
@@ -74,6 +75,7 @@ def edit_author(id):
         author=a, form=f)
 
 @app.route("/save/author/", methods =("POST",))
+@login_required
 def save_author():
     a = None
     f = AuthorForm()
@@ -87,6 +89,7 @@ def save_author():
 # add,author
 
 @app.route("/add/author/")
+@login_required
 def add_author():
     f = AuthorForm(id=None, name="")
     return render_template (
@@ -94,6 +97,7 @@ def add_author():
         form=f)
 
 @app.route("/add/save/author/", methods =("POST",))
+@login_required
 def save_new_author(new=False):
     print(new)
     a = None
