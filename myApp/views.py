@@ -18,6 +18,7 @@ class AuthorForm(FlaskForm):
 class LoginForm ( FlaskForm ):
     username = StringField ("Username")
     password = PasswordField ("Password")
+    next = HiddenField()
     def get_authenticated_user (self):
         user = User.query.get(self.username.data)
         if user is None:
@@ -30,11 +31,14 @@ class LoginForm ( FlaskForm ):
 @app.route("/login/", methods =("GET","POST" ,))
 def login():
     f = LoginForm()
-    if f. validate_on_submit():
+    if not f. is_submitted ():
+        f.next.data = request.args.get("next")
+    elif f. validate_on_submit():
         user = f.get_authenticated_user()
         if user:
             login_user(user)
-            return redirect(url_for("home"))
+            next = f.next.data or url_for("home")
+            return redirect(next)
     return render_template (
         "login.html",
         form=f)
