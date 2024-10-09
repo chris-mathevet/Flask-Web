@@ -55,13 +55,13 @@ def home():
         title="My Books !",
         books=mod.get_sample())
 
-@app.route("/detail/<id>")
+@app.route("/view/book/<id>")
 def detail(id):
     return render_template(
         "detail.html",
         book=mod.get_book_by_id(int(id)))
 
-@app.route("/author/<id>")
+@app.route("/view/author/<id>")
 def one_author(id):
     return render_template(
         "author.html",
@@ -98,7 +98,7 @@ def add_author():
         "add-author.html",
         form=f)
 
-@app.route("/add/save/author/", methods =("POST",))
+@app.route("/add/author/save", methods =("POST",))
 @login_required
 def save_new_author(new=False):
     print(new)
