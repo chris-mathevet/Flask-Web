@@ -114,7 +114,10 @@ def save_new_author(new=False):
 
 @app.route("/view/author")
 def list_author():
+    lim = int(request.args.get('lim', 10))  # Par défaut à 10 si pas de paramètre 'lim'
+
     return render_template(
         "authors.html",
         title="Authors",
-        authors=mod.get_sample_authors())
+        limiteAutheur=lim,
+        authors=mod.get_sample_authors(lim))
