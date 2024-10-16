@@ -1,0 +1,20 @@
+
+main{
+    /* margin-top: 2em; */
+    margin-bottom: 6em;
+    margin-top: 6em;
+}
+
+footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#book_action{
+    padding: 0.2em;
+    background-color: lightgrey;
+    display: flex;
+    justify-content: end;
+}
+

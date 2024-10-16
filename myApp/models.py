@@ -1,6 +1,19 @@
 from .app import db
 from flask_login import UserMixin
 from .app import login_manager
+from sqlalchemy.orm import Mapped
+import random
+
+fav_books = db.Table("fav_books",
+        db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True),
+        db.Column("id_book",db.Integer, db.ForeignKey("book.id"), primary_key =True),
+    )
+
+# fav_books = db.Table("fav_books",
+#         db.metadata,
+#         db.Column("username",db.ForeignKey("user.username"), primary_key =True),
+#         db.Column("id_book", db.ForeignKey("book.id"), primary_key =True),
+#     )
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,13 +30,19 @@ class Book(db.Model):
     img = db.Column(db.String(100))
     author_id = db.Column(db.Integer , db.ForeignKey("author.id"))
     author = db.relationship("Author",backref=db.backref("books", lazy="dynamic"))
+    favorites_book = db.relationship("User",secondary=fav_books,back_populates="favorites")
 
     def __repr__(self ):
         return self.title
+    
+# class fav_books(db.Model):
+#     user = db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True)
+#     book = db.Column("id_book",db.Integer, db.ForeignKey("book.id"), primary_key =True)
 
 class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
     password = db.Column(db.String(64))
+    favorites = db.relationship("Book", secondary=fav_books,back_populates="favorites_book")
 
     def __repr__(self):
         return self.username
@@ -45,6 +64,40 @@ def get_books_by_author(id:int):
 
 def get_user_by_username(username:str):
     return User.query.get_or_404(username)
+
+def get_fav_books_by_username(username:str):
+    return User.query.get_or_404(username).favorites
+
+def add_favorites(user,id_book:int):
+    book = get_book_by_id(id_book)
+    if book not in user.favorites:
+        user.favorites.append(book)
+        db.session.commit()
+
+def recommendations(user):
+    """ Prend 5 livres au hasard parmis
+        Les livres des auteurs des livres favoris
+
+    Args:
+        user (): Utilisateur
+    """
+    fav_books = user.favorites
+    authors = {book.author for book in fav_books}
+    recommends = []
+    for author in authors:
+        author_books = get_books_by_author(author.id)
+        for book in author_books:
+            if book not in fav_books:
+                recommends.append(book)
+    if len(recommends)>5:
+        recommends = random.sample(recommends,5)
+    return recommends
+
+def supp_favorites(user,id_book:int):
+    book = get_book_by_id(id_book)
+    if book in user.favorites:
+        user.favorites.remove(book)
+        db.session.commit()
 
 @login_manager.user_loader
 def load_user(username):

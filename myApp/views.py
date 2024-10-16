@@ -49,11 +49,12 @@ def logout():
 
 @app.route("/")
 def home():
-    print(current_user.is_authenticated, "\n\n\n")
     return render_template(
         "home.html",
         title="My Books !",
         books=mod.get_sample())
+
+# View
 
 @app.route("/view/book/<id>")
 def detail(id):
@@ -67,6 +68,8 @@ def one_author(id):
         "author.html",
         author = mod.get_author_by_id(int(id)),
         books = mod.get_books_by_author(int(id)))
+
+# Edit
 
 @app.route("/edit/author/<int:id>")
 @login_required
@@ -90,6 +93,8 @@ def save_author():
     a = mod.get_author_by_id(int(f.id.data))
     return render_template("edit-author.html", author=a, form=f)
 
+# Add
+
 @app.route("/add/author/")
 @login_required
 def add_author():
@@ -110,3 +115,28 @@ def save_new_author(new=False):
         db.session.commit()
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
+
+# User
+
+@app.route("/user/favorites/")
+@login_required
+def favorite_books():
+    return render_template(
+            "favorites.html",
+            books=current_user.favorites,
+            recommends = mod.recommendations(current_user))
+
+@app.route("/user/favorites/add/<int:book_id>")
+@login_required
+def add_favorite(book_id):
+    mod.add_favorites(current_user,book_id)
+    return redirect(url_for("detail",id=book_id))
+
+@app.route("/user/favorites/del/<int:book_id>")
+@login_required
+def supp_favorite(book_id):
+    mod.supp_favorites(current_user,book_id)
+    return redirect(url_for("detail",id=book_id))
+
+
+
