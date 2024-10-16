@@ -125,3 +125,11 @@ def favorite_books():
             "home.html",
             title="My favorites !",
             books=mod.get_fav_books(current_user.username))
+
+@app.route("/user/favorites/add/<int:book_id>")
+@login_required
+def add_favorite(book_id):
+    mod.add_favorites(current_user.username,book_id)
+    return favorite_books()
+
+

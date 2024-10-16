@@ -68,8 +68,11 @@ def get_fav_books(username:str):
     return User.query.get_or_404(username).favorites
 
 def add_favorites(username:str,id_book:int):
-    fav = fav_books.add(username,id_book)
-    db.session.commit()
+    user = get_user_by_username(username)
+    book = get_book_by_id(id_book)
+    if book not in user.favorites:
+        user.favorites.append(book)
+        db.session.commit()
 
 @login_manager.user_loader
 def load_user(username):
