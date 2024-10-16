@@ -69,6 +69,15 @@ def one_author(id):
         author = mod.get_author_by_id(int(id)),
         books = mod.get_books_by_author(int(id)))
 
+@app.route("/view/author")
+def list_author():
+    lim = int(request.args.get('lim', 10)) 
+
+    return render_template(
+        "authors.html",
+        title="Authors",
+        limiteAutheur=lim,
+        authors=mod.get_sample_authors(lim))
 # Edit
 
 @app.route("/edit/author/<int:id>")
@@ -117,15 +126,6 @@ def save_new_author(new=False):
     return render_template("edit-author.html", author=a, form=f)
 
 
-@app.route("/view/author")
-def list_author():
-    lim = int(request.args.get('lim', 10))  # Par défaut à 10 si pas de paramètre 'lim'
-
-    return render_template(
-        "authors.html",
-        title="Authors",
-        limiteAutheur=lim,
-        authors=mod.get_sample_authors(lim))
 # User
 
 @app.route("/user/favorites/")
