@@ -33,6 +33,10 @@ class Book(db.Model):
 
     def __repr__(self ):
         return self.title
+    
+# class fav_books(db.Model):
+#     user = db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True)
+#     book = db.Column("id_book",db.Integer, db.ForeignKey("book.id"), primary_key =True)
 
 class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
@@ -64,7 +68,8 @@ def get_fav_books(username:str):
     return User.query.get_or_404(username).favorites
 
 def add_favorites(username:str,id_book:int):
-    
+    fav = fav_books.add(username,id_book)
+    db.session.commit()
 
 @login_manager.user_loader
 def load_user(username):
