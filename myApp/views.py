@@ -122,9 +122,9 @@ def save_new_author(new=False):
 @login_required
 def favorite_books():
     return render_template(
-            "home.html",
-            title="My favorites !",
-            books=mod.get_fav_books(current_user.username))
+            "favorites.html",
+            books=mod.get_fav_books(current_user.username),
+            recommends = mod.recommendations(current_user.username))
 
 @app.route("/user/favorites/add/<int:book_id>")
 @login_required

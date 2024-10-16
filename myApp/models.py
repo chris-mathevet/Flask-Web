@@ -2,6 +2,7 @@ from .app import db
 from flask_login import UserMixin
 from .app import login_manager
 from sqlalchemy.orm import Mapped
+import random
 
 fav_books = db.Table("fav_books",
         db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True),
@@ -73,6 +74,28 @@ def add_favorites(username:str,id_book:int):
     if book not in user.favorites:
         user.favorites.append(book)
         db.session.commit()
+
+def recommendations(username:str):
+    """ Prend 5 livres au hasard parmis
+        Les livres des auteurs des livres favoris
+
+    Args:
+        username (str): _description_
+    """    
+    user = get_user_by_username(username)
+    fav_books = user.favorites
+    authors = {book.author for book in fav_books}
+    recommends = []
+    for author in authors:
+        author_books = get_books_by_author(author.id)
+        for book in author_books:
+            if book not in fav_books:
+                recommends.append(book)
+    if len(recommends)>5:
+        recommends = random.sample(recommends,5)
+    return recommends
+    
+    
 
 def supp_favorites(username:str,id_book:int):
     user = get_user_by_username(username)
