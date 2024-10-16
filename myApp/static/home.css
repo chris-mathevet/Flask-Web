@@ -12,12 +12,6 @@ main{
     margin-top: 8em;
 }
 
-footer{
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
 main > .container {
     padding: 60px 15px 0;
 }
