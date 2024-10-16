@@ -53,3 +53,8 @@ def get_user_by_username(username:str):
 @login_manager.user_loader
 def load_user(username):
     return User.query.get(username)
+
+
+def get_nb_books_by_author(id:int):
+    return len(Author.query.get_or_404(id).books.all())
+

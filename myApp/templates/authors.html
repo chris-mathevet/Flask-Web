@@ -10,11 +10,15 @@ filename='tableau.css')}}">
 
 
 <h1>{{title}}</h1>
+<a href="{{ url_for('add_author')}}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+
+</a>
 <div class="sample">
     <table>
         <caption>Listes des hauteurs</caption>
         <thead>
-            <tr>
+            <tr style="text-align: center;">
                 <th>Nom</th>
                 <th>Nombre de livre ecrit</th>
                 <th>Action</th>
@@ -22,13 +26,16 @@ filename='tableau.css')}}">
             {% for x in authors %}
             <tr>
             <td>{{ x.name }}</td>
-            <td>fonction a ecrire</td>
-            <td>    
+            <td>fonction a ecrire
+            </td>
+            <td style="text-align: center; display: flex; justify-content: space-evenly;">    
                 <a href="{{ url_for('one_author', id=x.id)}}">            
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#26a269" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>                </a>
-                <a href="{{ url_for('edit_author', id=x.id) }}">            
+                
+                    <a href="{{ url_for('edit_author', id=x.id) }}">            
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#26a269" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-pen"><path d="M2 21a8 8 0 0 1 10.821-7.487"/><path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><circle cx="10" cy="8" r="5"/></svg>                
                 </a>
+
             </td>
             </tr>
             {% endfor %}
