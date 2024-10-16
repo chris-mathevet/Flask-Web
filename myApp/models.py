@@ -34,6 +34,10 @@ class User(db.Model,UserMixin):
 def get_sample():
     return Book.query.limit(10).all()
 
+
+def get_sample_authors():
+    return Author.query.limit(10).all()
+
 def get_book_by_id(id:int):
     return Book.query.get_or_404(id)
 

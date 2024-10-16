@@ -110,3 +110,11 @@ def save_new_author(new=False):
         db.session.commit()
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
+
+
+@app.route("/view/author")
+def list_author():
+    return render_template(
+        "authors.html",
+        title="Authors",
+        authors=mod.get_sample_authors())

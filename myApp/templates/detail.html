@@ -14,6 +14,10 @@
             <h5 class="card-text card-footer">
                     Auteur : {{ book.author }}
             </h5>
+            <a href="{{ url_for('one_author', id=book.author.id)}}">
+                View
+            </a>
+
             <h6 class="card-text card-footer">
                 Prix : {{ book.price }} €
         </h6>
