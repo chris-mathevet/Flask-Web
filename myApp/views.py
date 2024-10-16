@@ -132,4 +132,10 @@ def add_favorite(book_id):
     mod.add_favorites(current_user.username,book_id)
     return favorite_books()
 
+@app.route("/user/favorites/del/<int:book_id>")
+@login_required
+def supp_favorite(book_id):
+    mod.supp_favorites(current_user.username,book_id)
+    return favorite_books()
+
 

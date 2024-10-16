@@ -74,6 +74,13 @@ def add_favorites(username:str,id_book:int):
         user.favorites.append(book)
         db.session.commit()
 
+def supp_favorites(username:str,id_book:int):
+    user = get_user_by_username(username)
+    book = get_book_by_id(id_book)
+    if book in user.favorites:
+        user.favorites.remove(book)
+        db.session.commit()
+
 @login_manager.user_loader
 def load_user(username):
     return User.query.get(username)

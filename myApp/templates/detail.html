@@ -6,7 +6,13 @@
 {% block content %}
 <div class="card border-light mb-3 mycard">
     <div class="card-header">{{ book.title }}</div>
-    <a href="{{ url_for('add_favorite',book_id=book.id) }}">Add fav</a>
+        {% if current_user.is_authenticated %}
+                {% if book in current_user.favorites %}
+                        <a href="{{ url_for('supp_favorite',book_id=book.id) }}">Sup fav</a>
+                {% else %}
+                        <a href="{{ url_for('add_favorite',book_id=book.id) }}">Add fav</a>
+                {% endif %}
+        {% endif %}
     <a href="{{ book.url }}" target='_blank'>
             <img src="{{ url_for('static', filename='images/'+book.img) }}" alt="Couverture de {{ book.title }}"
                     title="{{ book.title }}" class="card-img-top" />
