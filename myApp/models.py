@@ -65,24 +65,22 @@ def get_books_by_author(id:int):
 def get_user_by_username(username:str):
     return User.query.get_or_404(username)
 
-def get_fav_books(username:str):
+def get_fav_books_by_username(username:str):
     return User.query.get_or_404(username).favorites
 
-def add_favorites(username:str,id_book:int):
-    user = get_user_by_username(username)
+def add_favorites(user,id_book:int):
     book = get_book_by_id(id_book)
     if book not in user.favorites:
         user.favorites.append(book)
         db.session.commit()
 
-def recommendations(username:str):
+def recommendations(user):
     """ Prend 5 livres au hasard parmis
         Les livres des auteurs des livres favoris
 
     Args:
-        username (str): _description_
-    """    
-    user = get_user_by_username(username)
+        user (): Utilisateur
+    """
     fav_books = user.favorites
     authors = {book.author for book in fav_books}
     recommends = []
@@ -94,11 +92,8 @@ def recommendations(username:str):
     if len(recommends)>5:
         recommends = random.sample(recommends,5)
     return recommends
-    
-    
 
-def supp_favorites(username:str,id_book:int):
-    user = get_user_by_username(username)
+def supp_favorites(user,id_book:int):
     book = get_book_by_id(id_book)
     if book in user.favorites:
         user.favorites.remove(book)

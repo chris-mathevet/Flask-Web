@@ -123,19 +123,19 @@ def save_new_author(new=False):
 def favorite_books():
     return render_template(
             "favorites.html",
-            books=mod.get_fav_books(current_user.username),
-            recommends = mod.recommendations(current_user.username))
+            books=current_user.favorites,
+            recommends = mod.recommendations(current_user))
 
 @app.route("/user/favorites/add/<int:book_id>")
 @login_required
 def add_favorite(book_id):
-    mod.add_favorites(current_user.username,book_id)
+    mod.add_favorites(current_user,book_id)
     return redirect(url_for("detail",id=book_id))
 
 @app.route("/user/favorites/del/<int:book_id>")
 @login_required
 def supp_favorite(book_id):
-    mod.supp_favorites(current_user.username,book_id)
+    mod.supp_favorites(current_user,book_id)
     return redirect(url_for("detail",id=book_id))
 
 
