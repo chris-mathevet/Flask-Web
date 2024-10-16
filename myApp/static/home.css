@@ -8,10 +8,6 @@ div.sample{
     margin-right: 25%;
 }
 
-main{
-    margin-top: 8em;
-}
-
 main > .container {
     padding: 60px 15px 0;
 }

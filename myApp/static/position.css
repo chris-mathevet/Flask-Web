@@ -1,13 +1,12 @@
+
+main{
+    /* margin-top: 2em; */
+    margin-bottom: 6em;
+    margin-top: 6em;
+}
+
 footer{
-    position: sticky;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
-
-.fixed-top {
-    position: sticky;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 1030;
-  }
