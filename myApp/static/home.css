@@ -1,5 +1,7 @@
 h1 {
     color: rgb(132, 0, 255);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 div.sample{
@@ -9,7 +11,7 @@ div.sample{
 }
 
 main > .container {
-    padding: 60px 15px 0;
+    padding: 1em 15px 0 0;
 }
 
 div.mycard{
