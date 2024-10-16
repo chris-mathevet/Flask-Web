@@ -26,7 +26,8 @@ filename='tableau.css')}}">
             {% for x in authors %}
             <tr>
             <td>{{ x.name }}</td>
-            <td>fonction a ecrire
+            <td>
+                {{ x.get_nb_books_by_author()}}
             </td>
             <td style="text-align: center; display: flex; justify-content: space-evenly;">    
                 <a href="{{ url_for('one_author', id=x.id)}}">            
@@ -42,6 +43,8 @@ filename='tableau.css')}}">
         </thead>
         <tbody></tbody>
     </table>
+    <!-- <a href="{{ url_for('one_author', id= 1) }}"><button>REFRESH</button></a> -->
+
 </div>
 {% endblock %}
 

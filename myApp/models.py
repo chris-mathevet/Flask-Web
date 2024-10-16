@@ -6,6 +6,10 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
 
+    def get_nb_books_by_author(self):
+        print(self.id)
+        return len(get_books_by_author(self.id))
+    
     def __repr__(self ):
         return self.name
 
@@ -35,8 +39,8 @@ def get_sample():
     return Book.query.limit(10).all()
 
 
-def get_sample_authors():
-    return Author.query.limit(10).all()
+def get_sample_authors(lim = 10):
+    return Author.query.limit(lim).all()
 
 def get_book_by_id(id:int):
     return Book.query.get_or_404(id)
@@ -53,8 +57,4 @@ def get_user_by_username(username:str):
 @login_manager.user_loader
 def load_user(username):
     return User.query.get(username)
-
-
-def get_nb_books_by_author(id:int):
-    return len(Author.query.get_or_404(id).books.all())
 
