@@ -1,0 +1,7 @@
+#search_div {
+    display: flex;
+}
+
+#search_div > *{
+    width: 50%;
+}

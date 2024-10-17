@@ -36,15 +36,18 @@ class SearchForm( FlaskForm ):
 def search():
     f = SearchForm()
     srch = request.args.get("searchBar","")
-    if search:
-        search_val = srch
-        if search_val == "":
-            return redirect("https://www.youtube.com/watch?v=uHgt8giw1LY&autoplay=1")
-        elif search_val.lower() == "quoi":
-            return redirect("https://www.youtube.com/watch?v=5i5T_vE9RfU")
-        elif search_val.lower() == "triste":
-            return redirect("https://www.youtube.com/watch?v=8yPfLXZD4pk")
-    return redirect(url_for("home"))
+    if srch == "":
+        return redirect("https://www.youtube.com/watch?v=uHgt8giw1LY&autoplay=1")
+    elif srch.lower() == "quoi":
+        return redirect("https://www.youtube.com/watch?v=5i5T_vE9RfU")
+    elif srch.lower() == "triste":
+        return redirect("https://www.youtube.com/watch?v=8yPfLXZD4pk")
+    else:
+        return render_template(
+            "search.html",
+            search = srch,
+            books=mod.get_book_by_title(srch),
+            authors = mod.get_athor_by_name(srch))
 
 
 @app.route("/login/", methods =("GET","POST" ,))
@@ -69,12 +72,10 @@ def logout():
 
 @app.route("/")
 def home():
-    formSearch = SearchForm()
     return render_template(
         "home.html",
         title="My Books !",
-        books=mod.get_sample(),
-        formSearch = formSearch)
+        books=mod.get_sample())
 
 # View
 
