@@ -44,11 +44,11 @@ def search():
     f = SearchForm()
     srch = request.args.get("searchBar","")
     if srch == "":
-        return redirect("https://www.youtube.com/watch?v=uHgt8giw1LY&autoplay=1")
+        return redirect("https://www.yout-ube.com/watch?v=uHgt8giw1LY&autoplay=1")
     elif srch.lower() == "quoi":
-        return redirect("https://www.youtube.com/watch?v=5i5T_vE9RfU")
+        return redirect("https://www.yout-ube.com/watch?v=5i5T_vE9RfU")
     elif srch.lower() == "triste":
-        return redirect("https://www.youtube.com/watch?v=8yPfLXZD4pk")
+        return redirect("https://www.yout-ube.com/watch?v=8yPfLXZD4pk")
     else:
         return render_template(
             "search.html",

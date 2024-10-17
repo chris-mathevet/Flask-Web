@@ -7,9 +7,62 @@ main{
 
 footer{
     position: fixed;
+
     bottom: 0;
     width: 100%;
 }
+
+/* FOOTER */
+footer {
+    background-color: #858484;
+
+    /* background-color: #333; */
+	/* background-image: linear-gradient(#f5f5f5, #333333); */
+	/* background: radial-gradient(at top, #f5f5f5, #333333); */
+	
+	color: white;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.social-icons a {
+    margin: 0 10px;
+}
+
+.social-icons img {
+    width: 40px;
+    transition: transform 0.3s;
+}
+
+.social-icons img:hover {
+    transform: scale(1.1);
+}
+
+
+footer div:nth-child(2){
+	margin-top: 1%;
+}
+.dev a {
+    color: white;
+    text-decoration: inherit;
+}
+.dev p{
+    text-align: left;
+}
+.dev span{
+    text-decoration: underline;
+
+}
+.dev a:hover {
+    text-decoration: underline;
+}
+
 
 #book_action{
     padding: 0.2em;
