@@ -10,6 +10,7 @@ from wtforms. validators import DataRequired
 
 from flask_login import login_user , current_user, logout_user, login_required
 
+
 class AuthorForm(FlaskForm):
     id = HiddenField ("id")
     name = StringField("Nom",validators =[DataRequired()])
@@ -26,6 +27,12 @@ class LoginForm ( FlaskForm ):
         m.update(self.password.data.encode ())
         passwd = m. hexdigest ()
         return user if passwd == user.password else None
+
+
+class SignupForm ( FlaskForm ):
+    username = StringField ("Username")
+    password = PasswordField ("Password")
+    next = HiddenField()
 
 class SearchForm( FlaskForm ):
     search = StringField("Search")
@@ -64,6 +71,33 @@ def login():
     return render_template (
         "login.html",
         form=f)
+
+
+@app.route("/signup/", methods=["GET", "POST"])
+def register():
+    f = SignupForm()
+    if request.method == "POST":
+        # Validate form data
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not (username and password):
+            return render_template("singup.html", message="All fields are required.")
+
+        if f.validate_on_submit():
+            user = mod.User.query.get(username)
+            if user is None:
+                from .models import User
+                from hashlib import sha256
+                m = sha256()
+                m.update(password.encode())
+                new_user = User(username=username , password=m.hexdigest())
+                db.session.add(new_user)
+                db.session.commit()
+
+        return redirect("/login")
+
+    return render_template("singup.html", form=f)
 
 @app.route("/logout/")
 def logout():
@@ -138,7 +172,6 @@ def add_author():
 @app.route("/add/author/save", methods =("POST",))
 @login_required
 def save_new_author(new=False):
-    print(new)
     a = None
     f = AuthorForm()
     if f.validate_on_submit():
