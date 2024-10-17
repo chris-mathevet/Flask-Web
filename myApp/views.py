@@ -33,18 +33,7 @@ class SignupForm ( FlaskForm ):
     username = StringField ("Username")
     password = PasswordField ("Password")
     next = HiddenField()
-    # def cree (self, username, password):
-    #     user = mod.User.query.get(self.username.data)
-    #     print("icii")
-    #     print(user)
-    #     if user is None:
-    #         print("fdsfsd")
-    #         new_user =  mod.User(username,password,None)
-    #         print(new_user)
-    #         db.session.add(new_user)
-    #         db.session.commit()
-    #     return None
-        
+
 @app.route("/login/", methods =("GET","POST" ,))
 def login():
     f = LoginForm()
@@ -80,7 +69,6 @@ def register():
                 m = sha256()
                 m.update(password.encode())
                 new_user = User(username=username , password=m.hexdigest())
-                print(new_user)
                 db.session.add(new_user)
                 db.session.commit()
 
@@ -161,7 +149,6 @@ def add_author():
 @app.route("/add/author/save", methods =("POST",))
 @login_required
 def save_new_author(new=False):
-    print(new)
     a = None
     f = AuthorForm()
     if f.validate_on_submit():
