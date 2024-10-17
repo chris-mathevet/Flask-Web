@@ -27,6 +27,26 @@ class LoginForm ( FlaskForm ):
         passwd = m. hexdigest ()
         return user if passwd == user.password else None
 
+class SearchForm( FlaskForm ):
+    search = StringField("Search")
+    def getSearch(self):
+        return self.search.data
+    
+@app.route("/search/", methods =("GET","POST" ,))
+def search():
+    f = SearchForm()
+    srch = request.args.get("searchBar","")
+    if search:
+        search_val = srch
+        if search_val == "":
+            return redirect("https://www.youtube.com/watch?v=uHgt8giw1LY&autoplay=1")
+        elif search_val.lower() == "quoi":
+            return redirect("https://www.youtube.com/watch?v=5i5T_vE9RfU")
+        elif search_val.lower() == "triste":
+            return redirect("https://www.youtube.com/watch?v=8yPfLXZD4pk")
+    return redirect(url_for("home"))
+
+
 @app.route("/login/", methods =("GET","POST" ,))
 def login():
     f = LoginForm()
@@ -49,10 +69,12 @@ def logout():
 
 @app.route("/")
 def home():
+    formSearch = SearchForm()
     return render_template(
         "home.html",
         title="My Books !",
-        books=mod.get_sample())
+        books=mod.get_sample(),
+        formSearch = formSearch)
 
 # View
 

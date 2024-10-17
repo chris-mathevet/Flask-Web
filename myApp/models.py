@@ -57,7 +57,6 @@ class User(db.Model,UserMixin):
 def get_sample():
     return Book.query.limit(10).all()
 
-
 def get_sample_authors(lim = 10):
     return Author.query.limit(lim).all()
 
