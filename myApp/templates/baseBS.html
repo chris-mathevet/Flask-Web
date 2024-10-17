@@ -82,11 +82,31 @@
             {% endblock %}
             </div>
         </main>
-        <footer class="footer mt-auto py-3 bg-light">
-            <div class="container">
-              <span class="text-muted">Place sticky footer content here.</span>
-            </div>
-          </footer>
+        <footer>
+          <div class="footer-container">
+              <div class="social-icons">
+
+                  <a href="https://github.com/chris-mathevet/Flask-Web" target="_blank">
+                      <img src="{{ url_for('static',
+                      filename='images/github.png')}}" alt="GitHub">
+                  </a>            
+
+              </div>
+              <div>
+                  <p>MY BOOKS</p>
+                  <p>PROJET SITE WEB FLASK © 2024</p>
+              </div>
+              <div class="dev">
+                  <p> <span>The developers: </span><br>
+                    <a href="https://github.com/chris-mathevet/">Chris MATHEVET
+                    </a> 
+                    <br>
+                    <a href="https://github.com/julian2bot">Julian MARQUES
+                    </a>
+                  </p>
+              </div>
+          </div>
+      </footer>
         {% block scripts %}
             <!-- Optional JavaScript -->
             {{ bootstrap.load_js() }}
