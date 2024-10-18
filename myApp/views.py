@@ -119,19 +119,24 @@ def home():
 def detail(id):
     f = CommentForm()
     editT = request.args.get('edit', "False")
-    print(editT)
     editT = (editT == "True") 
-    print(editT)
+    suppr = request.args.get('suppr', "False")
+    
+    book = mod.get_book_by_id(int(id))
+
+    if editT:
+        f.comment.data = book.get_comment(current_user).comment
+    
+    if suppr == "True":
+        mod.del_comment(current_user,book) 
 
     if request.method == "POST":
         if f.validate_on_submit():
             comment = f.comment.data
-            book = mod.get_book_by_id(id)
-            print("modifff")
             mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
-        book=mod.get_book_by_id(int(id)),
+        book=book,
         edit=editT,
 
         form = f)

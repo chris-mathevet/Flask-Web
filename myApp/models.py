@@ -91,12 +91,17 @@ def add_edit_comment(user, book, commentaire):
     comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
     if comm == None:    
         comm = Comment(username = user.username,book_id = book.id, comment = commentaire)
-        print("comm",comm)
         db.session.add(comm)
     else:
         comm.comment = commentaire
     
     db.session.commit()
+
+def del_comment(user, book):
+    comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
+    if comm != None:
+        db.session.delete(comm)
+        db.session.commit()
 
 # Favorites
 
