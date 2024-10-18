@@ -10,3 +10,8 @@ PyYAML
 visitor==0.1.3
 Werkzeug==2.2.2
 WTForms==3.0.1
+Markup                                                                                      
+flask-sqlalchemy                                                                                             
+flask-wtf   
+flask-login                                                                                                     
+
