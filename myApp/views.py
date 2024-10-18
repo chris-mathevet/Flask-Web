@@ -39,6 +39,11 @@ class SearchForm( FlaskForm ):
     def getSearch(self):
         return self.search.data
     
+class CommentForm( FlaskForm ):
+    comment = StringField("Comment",validators =[DataRequired()])
+    def getSearch(self):
+        return self.search.data
+    
 @app.route("/search/", methods =("GET","POST" ,))
 def search():
     f = SearchForm()
@@ -117,7 +122,8 @@ def home():
 def detail(id):
     return render_template(
         "detail.html",
-        book=mod.get_book_by_id(int(id)))
+        book=mod.get_book_by_id(int(id)),
+        form = CommentForm())
 
 @app.route("/view/author/<id>")
 def one_author(id):
@@ -181,6 +187,15 @@ def save_new_author(new=False):
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
 
+@app.route("/add/comment/<int:book_id>", methods =("POST",))
+@login_required
+def add_comment(book_id):
+    f = CommentForm()
+    if f.validate_on_submit():
+        book = mod.get_book_by_id(book_id)
+        mod.add_edit_comment(current_user,book,f.comment.data)
+        return redirect(url_for("detail",id=book_id))
+    return redirect(url_for("detail",id=book_id))
 
 # User
 
@@ -203,3 +218,4 @@ def add_favorite(book_id):
 def supp_favorite(book_id):
     mod.supp_favorites(current_user,book_id)
     return redirect(url_for("detail",id=book_id))
+

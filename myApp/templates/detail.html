@@ -53,7 +53,11 @@
                 {% else %}
                         <section>
                                 <h4>Add a comment:</h4>
-                                <p> commentaire </p>
+                                <form method="POST" action="{{ url_for('add_comment', book_id=book.id) }}">
+                                        {{ form.comment(size =50, class_="form-control",
+                                        placeholder ="Comment") }}
+                                        <button type="submit" class="btn btn-default">Post</button>
+                                </form>
                         </section>
                 {% endif %}
         {% endif %}

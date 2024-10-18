@@ -92,6 +92,7 @@ def add_edit_comment(user, book, commentaire):
     comm = Comment.query.get_or_404(username = user.username, book_id = book.id)
     if comm == None:    
         comm = Comment(username = user.username,book_id = book.id, comment = commentaire)
+        db.session.add(comm)
     else:
         comm.commentaire = commentaire
     
