@@ -29,24 +29,41 @@ class Book(db.Model):
     author_id = db.Column(db.Integer , db.ForeignKey("author.id"))
     author = db.relationship("Author",backref=db.backref("books", lazy="dynamic"))
     favorites_book = db.relationship("User",secondary=fav_books,back_populates="favorites")
+    book_comment = db.relationship("Comment", back_populates="book")
 
     def __repr__(self ):
         return self.title
     
-# class fav_books(db.Model):
-#     user = db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True)
-#     book = db.Column("id_book",db.Integer, db.ForeignKey("book.id"), primary_key =True)
+    def has_commented(self, user):
+        for comment in self.book_comment:
+            if user == comment.user:
+                return True
+        return False
+    
+    def get_comment(self,user):
+        for comment in self.book_comment:
+            if user == comment.user:
+                return comment
+        return None
 
 class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
     password = db.Column(db.String(64))
     favorites = db.relationship("Book", secondary=fav_books,back_populates="favorites_book")
+    user_comment = db.relationship("Comment", back_populates="user")
 
     def __repr__(self):
         return self.username
     
     def get_id(self):
         return self.username
+    
+class Comment(db.Model):
+    username = db.Column(db.String(50),db.ForeignKey("user.username"), primary_key =True)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key =True)
+    comment = db.Column(db.String(150))
+    user = db.relationship("User", back_populates="user_comment")
+    book = db.relationship("Book", back_populates="book_comment")
 
 # Get
 
@@ -71,25 +88,14 @@ def get_user_by_username(username:str):
 def get_fav_books_by_username(username:str):
     return User.query.get_or_404(username).favorites
 
-def get_book_by_title(book_title):
-    # res = Book.query.filter(Book.title.startswith(book_title)).all()
-    # if res == []:
-    #     res = Book.query.filter(Book.title.contains(book_title))
-    # return res
-    res = Book.query.filter(Book.title.startswith(book_title)).all()
-    res2 = Book.query.filter(Book.title.contains(book_title)).all()
-    for book in res2:
-        if book not in res:
-            res.append(book)
-    return res
-
-def get_athor_by_name(athor_name):
-    res = Author.query.filter(Author.name.startswith(athor_name)).all()
-    res2 = Author.query.filter(Author.name.contains(athor_name)).all()
-    for author in res2:
-        if author not in res:
-            res.append(author)
-    return res
+def add_edit_comment(user, book, commentaire):
+    comm = Comment.query.get_or_404(username = user.username, book_id = book.id)
+    if comm == None:    
+        comm = Comment(username = user.username,book_id = book.id, comment = commentaire)
+    else:
+        comm.commentaire = commentaire
+    
+    db.session.commit()
 
 # Favorites
 
@@ -131,3 +137,19 @@ def load_user(username):
     return User.query.get(username)
 
 # Search Bar
+
+def get_book_by_title(book_title):
+    res = Book.query.filter(Book.title.startswith(book_title)).all()
+    res2 = Book.query.filter(Book.title.contains(book_title)).all()
+    for book in res2:
+        if book not in res:
+            res.append(book)
+    return res
+
+def get_athor_by_name(athor_name):
+    res = Author.query.filter(Author.name.startswith(athor_name)).all()
+    res2 = Author.query.filter(Author.name.contains(athor_name)).all()
+    for author in res2:
+        if author not in res:
+            res.append(author)
+    return res

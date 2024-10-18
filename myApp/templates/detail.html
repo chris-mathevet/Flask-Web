@@ -42,4 +42,27 @@
         </h6>
     </div>
 </div>
+<section>
+        <h3>Comments:</h3>
+        {% if current_user.is_authenticated %}
+                {% if book.has_commented(current_user) %}
+                        <section>
+                                <h4>Your comment:</h4>
+                                <p> {{book.get_comment(current_user)}} </p>
+                        </section>
+                {% else %}
+                        <section>
+                                <h4>Add a comment:</h4>
+                                <p> commentaire </p>
+                        </section>
+                {% endif %}
+        {% endif %}
+        {% for x in book.book_comment %}
+                <div>
+                        {% if x.comment.user != current_user %}
+                                <p>{{x.comment}}</p>
+                        {% endif %}
+                </div>
+        {% endfor %}
+</section>
 {% endblock %}
