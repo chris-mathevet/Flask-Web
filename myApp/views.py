@@ -106,10 +106,13 @@ def logout():
 
 @app.route("/")
 def home():
+    lim = int(request.args.get('lim', 10)) 
+
     return render_template(
         "home.html",
         title="My Books !",
-        books=mod.get_sample())
+        limiteAutheur=lim,
+        books=mod.get_sample(lim))
 
 # View
 
