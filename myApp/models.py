@@ -14,7 +14,6 @@ class Author(db.Model):
     name = db.Column(db.String(100))
 
     def get_nb_books_by_author(self):
-        print(self.id)
         return len(get_books_by_author(self.id))
     
     def __repr__(self ):
@@ -89,9 +88,11 @@ def get_fav_books_by_username(username:str):
     return User.query.get_or_404(username).favorites
 
 def add_edit_comment(user, book, commentaire):
-    comm = Comment.query.get_or_404(username = user.username, book_id = book.id)
+    comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
     if comm == None:    
+        # print("bqeygfeuyfgeu")
         comm = Comment(username = user.username,book_id = book.id, comment = commentaire)
+        print("comm",comm)
         db.session.add(comm)
     else:
         comm.commentaire = commentaire

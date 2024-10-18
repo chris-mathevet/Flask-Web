@@ -41,8 +41,6 @@ class SearchForm( FlaskForm ):
     
 class CommentForm( FlaskForm ):
     comment = StringField("Comment",validators =[DataRequired()])
-    def getSearch(self):
-        return self.search.data
     
 @app.route("/search/", methods =("GET","POST" ,))
 def search():
@@ -88,7 +86,6 @@ def register():
 
         if not (username and password):
             return render_template("singup.html", message="All fields are required.")
-
         if f.validate_on_submit():
             user = mod.User.query.get(username)
             if user is None:
@@ -118,12 +115,19 @@ def home():
 
 # View
 
-@app.route("/view/book/<id>")
+@app.route("/view/book/<id>", methods =["GET","POST"])
 def detail(id):
+    f = CommentForm()
+    if request.method == "POST":
+        if f.validate_on_submit():
+            comment = f.comment.data
+            book = mod.get_book_by_id(id)
+            print("avant")
+            mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
         book=mod.get_book_by_id(int(id)),
-        form = CommentForm())
+        form = f)
 
 @app.route("/view/author/<id>")
 def one_author(id):
@@ -187,14 +191,16 @@ def save_new_author(new=False):
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
 
-@app.route("/add/comment/<int:book_id>", methods =("POST",))
+@app.route("/add/comment/<int:book_id>/<form>", methods =("POST",))
 @login_required
-def add_comment(book_id):
-    f = CommentForm()
-    if f.validate_on_submit():
-        book = mod.get_book_by_id(book_id)
-        mod.add_edit_comment(current_user,book,f.comment.data)
-        return redirect(url_for("detail",id=book_id))
+def add_comment(book_id, form):
+    # comment = request.args.get("comment",None)
+    print(form)
+    # if comment:
+        # if form.validate_on_submit():
+        #     book = mod.get_book_by_id(book_id)
+        #     mod.add_edit_comment(current_user,book,comment)
+        #     return redirect(url_for("detail",id=book_id))
     return redirect(url_for("detail",id=book_id))
 
 # User
