@@ -6,7 +6,7 @@ from hashlib import sha256
 from flask import render_template, url_for, redirect,request
 from flask_wtf import FlaskForm
 from wtforms import StringField , HiddenField, PasswordField
-from wtforms. validators import DataRequired
+from wtforms. validators import DataRequired, Length
 
 from flask_login import login_user , current_user, logout_user, login_required
 
@@ -40,7 +40,7 @@ class SearchForm( FlaskForm ):
         return self.search.data
     
 class CommentForm( FlaskForm ):
-    comment = StringField("Comment",validators =[DataRequired()])
+    comment = StringField("Comment",validators =[DataRequired(), Length(max=149)])
     
 @app.route("/search/", methods =("GET","POST" ,))
 def search():
@@ -118,15 +118,22 @@ def home():
 @app.route("/view/book/<id>", methods =["GET","POST"])
 def detail(id):
     f = CommentForm()
+    editT = request.args.get('edit', "False")
+    print(editT)
+    editT = (editT == "True") 
+    print(editT)
+
     if request.method == "POST":
         if f.validate_on_submit():
             comment = f.comment.data
             book = mod.get_book_by_id(id)
-            print("avant")
+            print("modifff")
             mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
         book=mod.get_book_by_id(int(id)),
+        edit=editT,
+
         form = f)
 
 @app.route("/view/author/<id>")
