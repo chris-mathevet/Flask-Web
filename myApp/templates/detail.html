@@ -42,4 +42,46 @@
         </h6>
     </div>
 </div>
+<section>
+        {% if current_user.is_authenticated %}
+                {% if book.has_commented(current_user) and edit == False %}
+                        <section class="commentaire">
+                                <div id="ur_com">
+                                        <h3>Your comment:</h3>
+                                        <a href="{{ url_for('detail', id=book.id, edit=True) }}">
+                                                <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>
+                                                <title>edit comment</title>
+                                                </svg>
+                                        </a>
+                                        <a href="{{ url_for('detail', id=book.id, suppr=True) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+                                                <title>del comment</title>
+                                                </svg>
+                                        </a>
+                                </div>
+                                <p> {{ book.get_comment(current_user).comment }} </p>
+                        </section>
+                {% else %}
+                        <section class="commentaire">
+                                <h3>Add a comment:</h3>
+                                <form method="POST" action="{{ url_for('detail', id=book.id, edit=False)}}">
+                                        {{form.hidden_tag()}}
+                                        <div>{{ form.comment(size =50, class_="form-control",
+                                        placeholder ="Comment") }}
+                                        <button type="submit" class="btn btn-default">Post</button>
+                                </div>
+                                </form>
+                        </section>
+                {% endif %}
+        {% endif %}
+        <h3>Comments:</h3>
+        {% for x in book.book_comment %}
+                {% if not book.get_comment(current_user) == x %}
+                <section class="commentaire">
+                        <h5>{{ x.user }}</h5>
+                        <p>{{x.comment}}</p>
+                </section>
+                {% endif %}
+        {% endfor %}
+</section>
 {% endblock %}

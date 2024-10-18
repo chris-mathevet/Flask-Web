@@ -106,3 +106,28 @@ body::-webkit-scrollbar-thumb {
   z-index: 2;
 
 }
+.commentaire{
+    margin: 0.1em;
+    padding: 0.5em;
+    background-color: rgba(140, 140, 140, 0.466);
+    border: solid 0.1em;
+    border-radius: 5px;
+    border-color: rgba(55, 55, 55, 0.675);
+}
+
+
+.commentaire > h5{
+    text-decoration: underline;
+}
+
+.commentaire > h5:hover{
+    color:#4c5e82;
+}
+
+#ur_com{
+    display: flex;
+}
+
+#ur_com > *{
+    padding-right: 0.5em;
+}

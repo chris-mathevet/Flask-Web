@@ -14,7 +14,6 @@ class Author(db.Model):
     name = db.Column(db.String(100))
 
     def get_nb_books_by_author(self):
-        print(self.id)
         return len(get_books_by_author(self.id))
     
     def __repr__(self ):
@@ -34,9 +33,17 @@ class Book(db.Model):
     def __repr__(self ):
         return self.title
     
-# class fav_books(db.Model):
-#     user = db.Column("username",db.String(50),db.ForeignKey("user.username"), primary_key =True)
-#     book = db.Column("id_book",db.Integer, db.ForeignKey("book.id"), primary_key =True)
+    def has_commented(self, user):
+        for comment in self.book_comment:
+            if user == comment.user:
+                return True
+        return False
+    
+    def get_comment(self,user):
+        for comment in self.book_comment:
+            if user == comment.user:
+                return comment
+        return None
 
 class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
@@ -80,25 +87,21 @@ def get_user_by_username(username:str):
 def get_fav_books_by_username(username:str):
     return User.query.get_or_404(username).favorites
 
-def get_book_by_title(book_title):
-    # res = Book.query.filter(Book.title.startswith(book_title)).all()
-    # if res == []:
-    #     res = Book.query.filter(Book.title.contains(book_title))
-    # return res
-    res = Book.query.filter(Book.title.startswith(book_title)).all()
-    res2 = Book.query.filter(Book.title.contains(book_title)).all()
-    for book in res2:
-        if book not in res:
-            res.append(book)
-    return res
+def add_edit_comment(user, book, commentaire):
+    comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
+    if comm == None:    
+        comm = Comment(username = user.username,book_id = book.id, comment = commentaire)
+        db.session.add(comm)
+    else:
+        comm.comment = commentaire
+    
+    db.session.commit()
 
-def get_athor_by_name(athor_name):
-    res = Author.query.filter(Author.name.startswith(athor_name)).all()
-    res2 = Author.query.filter(Author.name.contains(athor_name)).all()
-    for author in res2:
-        if author not in res:
-            res.append(author)
-    return res
+def del_comment(user, book):
+    comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
+    if comm != None:
+        db.session.delete(comm)
+        db.session.commit()
 
 # Favorites
 
@@ -140,3 +143,19 @@ def load_user(username):
     return User.query.get(username)
 
 # Search Bar
+
+def get_book_by_title(book_title):
+    res = Book.query.filter(Book.title.startswith(book_title)).all()
+    res2 = Book.query.filter(Book.title.contains(book_title)).all()
+    for book in res2:
+        if book not in res:
+            res.append(book)
+    return res
+
+def get_athor_by_name(athor_name):
+    res = Author.query.filter(Author.name.startswith(athor_name)).all()
+    res2 = Author.query.filter(Author.name.contains(athor_name)).all()
+    for author in res2:
+        if author not in res:
+            res.append(author)
+    return res

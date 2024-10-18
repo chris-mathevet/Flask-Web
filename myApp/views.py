@@ -6,7 +6,7 @@ from hashlib import sha256
 from flask import render_template, url_for, redirect,request
 from flask_wtf import FlaskForm
 from wtforms import StringField , HiddenField, PasswordField
-from wtforms. validators import DataRequired
+from wtforms. validators import DataRequired, Length
 
 from flask_login import login_user , current_user, logout_user, login_required
 
@@ -38,6 +38,9 @@ class SearchForm( FlaskForm ):
     search = StringField("Search")
     def getSearch(self):
         return self.search.data
+    
+class CommentForm( FlaskForm ):
+    comment = StringField("Comment",validators =[DataRequired(), Length(max=149)])
     
 @app.route("/search/", methods =("GET","POST" ,))
 def search():
@@ -83,7 +86,6 @@ def register():
 
         if not (username and password):
             return render_template("singup.html", message="All fields are required.")
-
         if f.validate_on_submit():
             user = mod.User.query.get(username)
             if user is None:
@@ -116,11 +118,31 @@ def home():
 
 # View
 
-@app.route("/view/book/<id>")
+@app.route("/view/book/<id>", methods =["GET","POST"])
 def detail(id):
+    f = CommentForm()
+    editT = request.args.get('edit', "False")
+    editT = (editT == "True") 
+    suppr = request.args.get('suppr', "False")
+    
+    book = mod.get_book_by_id(int(id))
+
+    if editT:
+        f.comment.data = book.get_comment(current_user).comment
+    
+    if suppr == "True":
+        mod.del_comment(current_user,book) 
+
+    if request.method == "POST":
+        if f.validate_on_submit():
+            comment = f.comment.data
+            mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
-        book=mod.get_book_by_id(int(id)))
+        book=book,
+        edit=editT,
+
+        form = f)
 
 @app.route("/view/author/<id>")
 def one_author(id):
@@ -184,6 +206,17 @@ def save_new_author(new=False):
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
 
+@app.route("/add/comment/<int:book_id>/<form>", methods =("POST",))
+@login_required
+def add_comment(book_id, form):
+    # comment = request.args.get("comment",None)
+    print(form)
+    # if comment:
+        # if form.validate_on_submit():
+        #     book = mod.get_book_by_id(book_id)
+        #     mod.add_edit_comment(current_user,book,comment)
+        #     return redirect(url_for("detail",id=book_id))
+    return redirect(url_for("detail",id=book_id))
 
 # User
 
@@ -206,3 +239,4 @@ def add_favorite(book_id):
 def supp_favorite(book_id):
     mod.supp_favorites(current_user,book_id)
     return redirect(url_for("detail",id=book_id))
+
