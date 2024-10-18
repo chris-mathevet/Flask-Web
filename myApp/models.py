@@ -44,6 +44,7 @@ class Book(db.Model):
             if user == comment.user:
                 return comment
         return None
+        
 
 class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
@@ -61,6 +62,7 @@ class Comment(db.Model):
     username = db.Column(db.String(50),db.ForeignKey("user.username"), primary_key =True)
     book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key =True)
     comment = db.Column(db.String(150))
+    note = db.Column(db.Integer,default=None)
     user = db.relationship("User", back_populates="user_comment")
     book = db.relationship("Book", back_populates="book_comment")
 
@@ -87,6 +89,11 @@ def get_user_by_username(username:str):
 def get_fav_books_by_username(username:str):
     return User.query.get_or_404(username).favorites
 
+def get_all_comment(book_id):
+    return Comment.query.filter_by(book_id=book_id).all()
+
+
+
 def add_edit_comment(user, book, commentaire):
     comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
     if comm == None:    
@@ -94,6 +101,16 @@ def add_edit_comment(user, book, commentaire):
         db.session.add(comm)
     else:
         comm.comment = commentaire
+    
+    db.session.commit()
+
+def add_edit_note(user, book, note):
+    comm = Comment.query.filter_by(username = user.username, book_id = book.id).first()
+    if comm == None:    
+        comm = Comment(username = user.username, book_id = book.id, note = note)
+        db.session.add(comm)
+    else:
+        comm.note = note
     
     db.session.commit()
 

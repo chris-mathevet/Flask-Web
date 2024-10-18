@@ -19,3 +19,21 @@ div.mycard{
     width: 18rem; 
 }
 
+
+.stars {
+	text-align: center;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.stargrey {
+	color: #96969d;
+}
+.stars > a{
+    text-decoration: none;
+}
+.stars .star:hover,
+.stars .star:hover ~ .star {	
+    color: #fedc18;
+	cursor: pointer;
+}

@@ -11,13 +11,23 @@
             <img src="{{ url_for('static', filename='images/'+book.img) }}" alt="Couverture de {{ book.title }}"
                     title="{{ book.title }}" class="card-img-top" />
     </a>
+
+
     {% if current_user.is_authenticated %}
+    
         <div id="book_action">
                 <a href="{{ url_for('one_author', id=book.author.id)}}">
                         <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-search"><circle cx="10" cy="7" r="4"/><path d="M10.3 15H7a4 4 0 0 0-4 4v2"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.9-1.9"/>
                         <title>see author</title>
                         </svg>
                 </a>
+                <div class="stars">
+                        <a href="{{url_for('noter', id=book.id, lanote=5)}}" class="star stargrey" ><i data-index="5">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=4)}}" class="star stargrey" ><i data-index="4">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=3)}}" class="star stargrey" ><i data-index="3">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=2)}}" class="star stargrey" ><i data-index="2">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=1)}}" class="star stargrey" ><i data-index="1">★</i></a>
+                </div>
                 {% if book in current_user.favorites %}
                         <a href="{{ url_for('supp_favorite',book_id=book.id) }}">
                         <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24" fill="red" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
@@ -40,6 +50,9 @@
             <h6 class="card-text card-footer">
                 Prix : {{ book.price }} €
         </h6>
+        <h6 class="card-text card-footer">
+                Note : {{ moyenne }}
+        </h6>
     </div>
 </div>
 <section>
@@ -58,6 +71,19 @@
                                                 <title>del comment</title>
                                                 </svg>
                                         </a>
+                                        <div>
+                                        {%if book.get_comment(current_user).note%}   
+                                                {% for i in range(1,6) %}
+                                                        {% if i <= book.get_comment(current_user).note %}
+                                                                <i style="color:yellow;" >★</i>
+                                                        {% else %}
+                                                                <i>★</i>
+                                                        {% endif %}
+
+                                                {% endfor %}
+                                        {% endif %}
+
+                                        </div>
                                 </div>
                                 <p> {{ book.get_comment(current_user).comment }} </p>
                         </section>
@@ -75,11 +101,30 @@
                 {% endif %}
         {% endif %}
         <h3>Comments:</h3>
+
         {% for x in book.book_comment %}
                 {% if not book.get_comment(current_user) == x %}
                 <section class="commentaire">
-                        <h5>{{ x.user }}</h5>
+                        <div style="display: flex; ">
+                                <h5 style="padding-right: 10px;">{{ x.user }}</h5>
+                                {%if x.note%}   
+                                
+                                        {% for i in range(1,6) %}
+                                                {% if i <= x.note %}
+                                                        <i style="color:yellow;" >★</i>
+                                                {% else %}
+                                                        <i>★</i>
+                                                {% endif %}
+
+                                        {% endfor %}
+                                {% endif %}
+
+                                </div>
+                        {%if x.comment%}   
                         <p>{{x.comment}}</p>
+
+                        {% endif %}
+                                        
                 </section>
                 {% endif %}
         {% endfor %}
