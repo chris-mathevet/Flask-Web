@@ -29,6 +29,7 @@ class Book(db.Model):
     author_id = db.Column(db.Integer , db.ForeignKey("author.id"))
     author = db.relationship("Author",backref=db.backref("books", lazy="dynamic"))
     favorites_book = db.relationship("User",secondary=fav_books,back_populates="favorites")
+    book_comment = db.relationship("Comment", back_populates="book")
 
     def __repr__(self ):
         return self.title
@@ -41,12 +42,20 @@ class User(db.Model,UserMixin):
     username = db.Column(db.String(50), primary_key=True)
     password = db.Column(db.String(64))
     favorites = db.relationship("Book", secondary=fav_books,back_populates="favorites_book")
+    user_comment = db.relationship("Comment", back_populates="user")
 
     def __repr__(self):
         return self.username
     
     def get_id(self):
         return self.username
+    
+class Comment(db.Model):
+    username = db.Column(db.String(50),db.ForeignKey("user.username"), primary_key =True)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key =True)
+    comment = db.Column(db.String(150))
+    user = db.relationship("User", back_populates="user_comment")
+    book = db.relationship("Book", back_populates="book_comment")
 
 # Get
 
