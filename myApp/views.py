@@ -121,11 +121,20 @@ def home():
 @app.route("/view/book/<id>", methods =["GET","POST"])
 def detail(id):
     f = CommentForm()
+    cpt_note,sum_note,moyenne_du_livre = 0,0,0
+    
     editT = request.args.get('edit', "False")
     editT = (editT == "True") 
     suppr = request.args.get('suppr', "False")
     
     book = mod.get_book_by_id(int(id))
+    print(mod.get_all_comment(book.id))
+    for comment in mod.get_all_comment(book.id):
+        if comment.note is not None:
+            sum_note += comment.note
+            cpt_note +=1
+    if cpt_note > 0: 
+        moyenne_du_livre = sum_note//cpt_note
 
     if editT:
         f.comment.data = book.get_comment(current_user).comment
@@ -141,7 +150,7 @@ def detail(id):
         "detail.html",
         book=book,
         edit=editT,
-
+        moyenne= moyenne_du_livre,
         form = f)
 
 @app.route("/view/author/<id>")
@@ -218,6 +227,14 @@ def add_comment(book_id, form):
         #     return redirect(url_for("detail",id=book_id))
     return redirect(url_for("detail",id=book_id))
 
+@app.route("/add/note/<id>/<lanote>", methods =("POST","GET"))
+@login_required
+def noter(id, lanote):
+    print("note:" + lanote)
+    book = mod.get_book_by_id(int(id))
+    mod.add_edit_note(current_user,book,int(lanote))
+    return redirect(url_for("detail",id=id))
+
 # User
 
 @app.route("/user/favorites/")
@@ -239,4 +256,16 @@ def add_favorite(book_id):
 def supp_favorite(book_id):
     mod.supp_favorites(current_user,book_id)
     return redirect(url_for("detail",id=book_id))
+
+# TKT
+
+@app.route("/mais/ca/nexiste/pas/")
+def disable_page():
+    return render_template(
+        "disabled.html")
+
+@app.errorhandler(404)
+@app.route("/mais/ca/nexiste/pas/")
+def page_not_found(e):
+    return redirect(url_for('disable_page'))
 

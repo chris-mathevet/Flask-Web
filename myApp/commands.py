@@ -42,6 +42,11 @@ def syncdb():
     """Creates all missing tables."""
     db.create_all()
 
+@app.cli.command()
+def cleardb():
+    """Creates all missing tables."""
+    db.drop_all()
+
 @app.cli.command ()
 @click.argument("username")
 @click.argument("password")
