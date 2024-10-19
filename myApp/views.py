@@ -136,16 +136,17 @@ def detail(id):
     if cpt_note > 0: 
         moyenne_du_livre = sum_note//cpt_note
 
-    if editT:
-        f.comment.data = book.get_comment(current_user).comment
-    
-    if suppr == "True":
-        mod.del_comment(current_user,book) 
+    if current_user.is_authenticated:
+        if editT:
+            f.comment.data = book.get_comment(current_user).comment
+        
+        if suppr == "True":
+            mod.del_comment(current_user,book) 
 
-    if request.method == "POST":
-        if f.validate_on_submit():
-            comment = f.comment.data
-            mod.add_edit_comment(current_user,book,comment)
+        if request.method == "POST":
+            if f.validate_on_submit():
+                comment = f.comment.data
+                mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
         book=book,
@@ -169,6 +170,12 @@ def list_author():
         title="Authors",
         limiteAutheur=lim,
         authors=mod.get_sample_authors(lim))
+
+@app.route("/view/favorites/<username>")
+def see_favorite(username):
+    user = mod.get_user_by_username(username)
+    return render_template("user_favorite.html", user=user)
+
 # Edit
 
 @app.route("/edit/author/<int:id>")
@@ -215,18 +222,6 @@ def save_new_author(new=False):
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
 
-@app.route("/add/comment/<int:book_id>/<form>", methods =("POST",))
-@login_required
-def add_comment(book_id, form):
-    # comment = request.args.get("comment",None)
-    print(form)
-    # if comment:
-        # if form.validate_on_submit():
-        #     book = mod.get_book_by_id(book_id)
-        #     mod.add_edit_comment(current_user,book,comment)
-        #     return redirect(url_for("detail",id=book_id))
-    return redirect(url_for("detail",id=book_id))
-
 @app.route("/add/note/<id>/<lanote>", methods =("POST","GET"))
 @login_required
 def noter(id, lanote):
@@ -268,4 +263,3 @@ def disable_page():
 @app.route("/mais/ca/nexiste/pas/")
 def page_not_found(e):
     return redirect(url_for('disable_page'))
-

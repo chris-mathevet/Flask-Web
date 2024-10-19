@@ -116,11 +116,12 @@ body::-webkit-scrollbar-thumb {
 }
 
 
-.commentaire > h5{
+.commentaire h5{
     text-decoration: underline;
+    color: black;
 }
 
-.commentaire > h5:hover{
+.commentaire h5:hover{
     color:#4c5e82;
 }
 
