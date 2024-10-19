@@ -67,7 +67,7 @@ class Comment(db.Model):
     book = db.relationship("Book", back_populates="book_comment")
     
     __table_args__ = (
-        db.CheckConstraint('note between 1 and 5', name='check -note'),
+        db.CheckConstraint('note between 1 and 5', name='check-note'),
         {}
     )
 
