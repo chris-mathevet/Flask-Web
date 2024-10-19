@@ -1,5 +1,7 @@
 h1 {
     color: rgb(132, 0, 255);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 div.sample{
@@ -8,18 +10,8 @@ div.sample{
     margin-right: 25%;
 }
 
-main{
-    margin-top: 8em;
-}
-
-footer{
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
 main > .container {
-    padding: 60px 15px 0;
+    padding: 1em 15px 0 0;
 }
 
 div.mycard{
@@ -27,3 +19,21 @@ div.mycard{
     width: 18rem; 
 }
 
+
+.stars {
+	text-align: center;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.stargrey {
+	color: #96969d;
+}
+.stars > a{
+    text-decoration: none;
+}
+.stars .star:hover,
+.stars .star:hover ~ .star {	
+    color: #fedc18;
+	cursor: pointer;
+}

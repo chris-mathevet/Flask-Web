@@ -1,0 +1,55 @@
+{% extends 'baseBS.html' %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static',
+filename='search.css')}}">
+<link rel="stylesheet" href="{{ url_for('static',
+filename='home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static',
+filename='tableau.css')}}">
+{% endblock %}
+{% block content %}
+<h1>Books and Authors that match with the research:</h1>
+<h2>{{ search }}</h1>
+<div id="search_div">
+    <section>
+        <h2>Books:</h1>
+        <div class="sample">
+            {% for x in books %}
+            <a href="{{url_for('detail', id=x.id)}}">
+                <img src="{{ url_for('static', filename='images/'+x.img) }}" alt="{{x.title}}" title="{{x.title}}">
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    <section>
+        <h2>Authors:</h1>
+            <table>
+                <thead>
+                    <tr style="text-align: center;">
+                        <th>Nom</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for x in authors %}
+                    <tr>
+                    <td>{{ x.name }}</td>
+                    <td style="text-align: center; display: flex; justify-content: space-evenly;">    
+                        <a href="{{ url_for('one_author', id=x.id)}}">            
+                            <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#26a269" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>
+                            <title>see author</title>
+                            </svg>
+                        </a>
+                        <a href="{{ url_for('edit_author', id=x.id) }}">            
+                            <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#26a269" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-pen"><path d="M2 21a8 8 0 0 1 10.821-7.487"/><path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><circle cx="10" cy="8" r="5"/>
+                            <title>edit author</title>
+                            </svg>                
+                        </a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </thead>
+                <tbody></tbody>
+            </table>
+    </section>
+</div>
+{% endblock %}

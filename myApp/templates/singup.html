@@ -1,9 +1,9 @@
 {% extends "baseBS.html" %}
 {% block content %}
 <form method="POST" 
-    action="{{ url_for('login') }}">
+    action="{{ url_for('register') }}">
     {{ form.hidden_tag () }}
-    <h1>Login</h1>
+    <h1>signUp</h1>
     <div class="form-group">
         <label for="username" class="col-sm-2 control-label"
         >{{ form.username.label }}</label>
@@ -22,7 +22,7 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-default">Sign in</button>
+        <button type="submit" class="btn btn-default">Sign  </button>
         </div>
     </div>
 </form>

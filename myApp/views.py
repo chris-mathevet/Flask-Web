@@ -1,15 +1,15 @@
 from .app import app, db
-from .models import *
-from flask import render_template, url_for, redirect
-from flask_wtf import FlaskForm
-from wtforms import StringField , HiddenField
-from wtforms. validators import DataRequired
-from wtforms import PasswordField
-from .models import User
+from . import models as mod
+
 from hashlib import sha256
-from flask_login import login_user , current_user
-from flask import request
-from flask_login import logout_user, login_required
+
+from flask import render_template, url_for, redirect,request
+from flask_wtf import FlaskForm
+from wtforms import StringField , HiddenField, PasswordField
+from wtforms. validators import DataRequired, Length
+
+from flask_login import login_user , current_user, logout_user, login_required
+
 
 class AuthorForm(FlaskForm):
     id = HiddenField ("id")
@@ -20,13 +20,45 @@ class LoginForm ( FlaskForm ):
     password = PasswordField ("Password")
     next = HiddenField()
     def get_authenticated_user (self):
-        user = User.query.get(self.username.data)
+        user = mod.User.query.get(self.username.data)
         if user is None:
             return None
         m = sha256 ()
         m.update(self.password.data.encode ())
         passwd = m. hexdigest ()
         return user if passwd == user.password else None
+
+
+class SignupForm ( FlaskForm ):
+    username = StringField ("Username")
+    password = PasswordField ("Password")
+    next = HiddenField()
+
+class SearchForm( FlaskForm ):
+    search = StringField("Search")
+    def getSearch(self):
+        return self.search.data
+    
+class CommentForm( FlaskForm ):
+    comment = StringField("Comment",validators =[DataRequired(), Length(max=149)])
+    
+@app.route("/search/", methods =("GET","POST" ,))
+def search():
+    f = SearchForm()
+    srch = request.args.get("searchBar","")
+    if srch == "":
+        return redirect("https://www.yout-ube.com/watch?v=uHgt8giw1LY&autoplay=1")
+    elif srch.lower() == "quoi":
+        return redirect("https://www.yout-ube.com/watch?v=5i5T_vE9RfU")
+    elif srch.lower() == "triste":
+        return redirect("https://www.yout-ube.com/watch?v=8yPfLXZD4pk")
+    else:
+        return render_template(
+            "search.html",
+            search = srch,
+            books=mod.get_book_by_title(srch),
+            authors = mod.get_athor_by_name(srch))
+
 
 @app.route("/login/", methods =("GET","POST" ,))
 def login():
@@ -37,11 +69,37 @@ def login():
         user = f.get_authenticated_user()
         if user:
             login_user(user)
-            next = f.next.data or url_for("home")
-            return redirect(next)
+            nextPage = f.next.data or url_for("home")
+            return redirect(nextPage)
     return render_template (
         "login.html",
         form=f)
+
+
+@app.route("/signup/", methods=["GET", "POST"])
+def register():
+    f = SignupForm()
+    if request.method == "POST":
+        # Validate form data
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not (username and password):
+            return render_template("singup.html", message="All fields are required.")
+        if f.validate_on_submit():
+            user = mod.User.query.get(username)
+            if user is None:
+                from .models import User
+                from hashlib import sha256
+                m = sha256()
+                m.update(password.encode())
+                new_user = User(username=username , password=m.hexdigest())
+                db.session.add(new_user)
+                db.session.commit()
+
+        return redirect("/login")
+
+    return render_template("singup.html", form=f)
 
 @app.route("/logout/")
 def logout():
@@ -50,29 +108,80 @@ def logout():
 
 @app.route("/")
 def home():
-    print(current_user.is_authenticated, "\n\n\n")
+    lim = int(request.args.get('lim', 10)) 
+
     return render_template(
         "home.html",
         title="My Books !",
-        books=get_sample())
+        limiteAutheur=lim,
+        books=mod.get_sample(lim))
 
-@app.route("/detail/<id>")
+# View
+
+@app.route("/view/book/<id>", methods =["GET","POST"])
 def detail(id):
+    f = CommentForm()
+    cpt_note,sum_note,moyenne_du_livre = 0,0,0
+    
+    editT = request.args.get('edit', "False")
+    editT = (editT == "True") 
+    suppr = request.args.get('suppr', "False")
+    
+    book = mod.get_book_by_id(int(id))
+    print(mod.get_all_comment(book.id))
+    for comment in mod.get_all_comment(book.id):
+        if comment.note is not None:
+            sum_note += comment.note
+            cpt_note +=1
+    if cpt_note > 0: 
+        moyenne_du_livre = sum_note//cpt_note
+
+    if current_user.is_authenticated:
+        if editT:
+            f.comment.data = book.get_comment(current_user).comment
+        
+        if suppr == "True":
+            mod.del_comment(current_user,book) 
+
+        if request.method == "POST":
+            if f.validate_on_submit():
+                comment = f.comment.data
+                mod.add_edit_comment(current_user,book,comment)
     return render_template(
         "detail.html",
-        book=get_book_by_id(int(id)))
+        book=book,
+        edit=editT,
+        moyenne= moyenne_du_livre,
+        form = f)
 
-@app.route("/author/<id>")
+@app.route("/view/author/<id>")
 def one_author(id):
     return render_template(
         "author.html",
-        author=get_author_by_id(int(id)),
-        books = get_books_by_author(int(id)))
+        author = mod.get_author_by_id(int(id)),
+        books = mod.get_books_by_author(int(id)))
+
+@app.route("/view/author")
+def list_author():
+    lim = int(request.args.get('lim', 10)) 
+
+    return render_template(
+        "authors.html",
+        title="Authors",
+        limiteAutheur=lim,
+        authors=mod.get_sample_authors(lim))
+
+@app.route("/view/favorites/<username>")
+def see_favorite(username):
+    user = mod.get_user_by_username(username)
+    return render_template("user_favorite.html", user=user)
+
+# Edit
 
 @app.route("/edit/author/<int:id>")
 @login_required
 def edit_author(id):
-    a = get_author_by_id(id)
+    a = mod.get_author_by_id(id)
     f = AuthorForm(id=a.id, name=a.name)
     return render_template (
         "edit-author.html",
@@ -84,13 +193,14 @@ def save_author():
     a = None
     f = AuthorForm()
     if f.validate_on_submit():
-        a = get_author_by_id(int(f.id.data))
+        a = mod.get_author_by_id(int(f.id.data))
         a.name = f.name.data
         db.session.commit()
         return redirect(url_for("one_author", id=a.id))
-    a = get_author_by_id(int(f.id.data))
+    a = mod.get_author_by_id(int(f.id.data))
     return render_template("edit-author.html", author=a, form=f)
-# add,author
+
+# Add
 
 @app.route("/add/author/")
 @login_required
@@ -100,29 +210,56 @@ def add_author():
         "add-author.html",
         form=f)
 
-@app.route("/add/save/author/", methods =("POST",))
+@app.route("/add/author/save", methods =("POST",))
 @login_required
 def save_new_author(new=False):
-    print(new)
     a = None
     f = AuthorForm()
     if f.validate_on_submit():
-        a = Author(name=f.name.data)
+        a = mod.Author(name=f.name.data)
         db.session.add(a)
         db.session.commit()
         return redirect(url_for("one_author", id=a.id))
     return render_template("edit-author.html", author=a, form=f)
 
-# @app.route("/save/author/", methods =("POST",))
-# def save_author():
-#     a = None
-#     f = AuthorForm()
-#     if f.validate_on_submit():
-#         a = get_author_by_id(int(f.id.data))
-#         a.name = f.name.data
-#         db.session.commit()
-#         return redirect(url_for("one_author", id=a.id))
-#     a = get_author_by_id(int(f.id.data))
-#     return render_template (
-#         "edit-author.html",
-#         author=a, form=f)
+@app.route("/add/note/<id>/<lanote>", methods =("POST","GET"))
+@login_required
+def noter(id, lanote):
+    print("note:" + lanote)
+    book = mod.get_book_by_id(int(id))
+    mod.add_edit_note(current_user,book,int(lanote))
+    return redirect(url_for("detail",id=id))
+
+# User
+
+@app.route("/user/favorites/")
+@login_required
+def favorite_books():
+    return render_template(
+            "favorites.html",
+            books=current_user.favorites,
+            recommends = mod.recommendations(current_user))
+
+@app.route("/user/favorites/add/<int:book_id>")
+@login_required
+def add_favorite(book_id):
+    mod.add_favorites(current_user,book_id)
+    return redirect(url_for("detail",id=book_id))
+
+@app.route("/user/favorites/del/<int:book_id>")
+@login_required
+def supp_favorite(book_id):
+    mod.supp_favorites(current_user,book_id)
+    return redirect(url_for("detail",id=book_id))
+
+# TKT
+
+@app.route("/mais/ca/nexiste/pas/")
+def disable_page():
+    return render_template(
+        "disabled.html")
+
+@app.errorhandler(404)
+@app.route("/mais/ca/nexiste/pas/")
+def page_not_found(e):
+    return redirect(url_for('disable_page'))

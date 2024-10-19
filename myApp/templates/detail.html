@@ -6,10 +6,43 @@
 {% block content %}
 <div class="card border-light mb-3 mycard">
     <div class="card-header">{{ book.title }}</div>
+       
     <a href="{{ book.url }}" target='_blank'>
             <img src="{{ url_for('static', filename='images/'+book.img) }}" alt="Couverture de {{ book.title }}"
                     title="{{ book.title }}" class="card-img-top" />
     </a>
+
+
+    {% if current_user.is_authenticated %}
+    
+        <div id="book_action">
+                <a href="{{ url_for('one_author', id=book.author.id)}}">
+                        <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-search"><circle cx="10" cy="7" r="4"/><path d="M10.3 15H7a4 4 0 0 0-4 4v2"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.9-1.9"/>
+                        <title>see author</title>
+                        </svg>
+                </a>
+                <div class="stars">
+                        <a href="{{url_for('noter', id=book.id, lanote=5)}}" class="star stargrey" ><i data-index="5">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=4)}}" class="star stargrey" ><i data-index="4">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=3)}}" class="star stargrey" ><i data-index="3">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=2)}}" class="star stargrey" ><i data-index="2">★</i></a>
+                        <a href="{{url_for('noter', id=book.id, lanote=1)}}" class="star stargrey" ><i data-index="1">★</i></a>
+                </div>
+                {% if book in current_user.favorites %}
+                        <a href="{{ url_for('supp_favorite',book_id=book.id) }}">
+                        <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24" fill="red" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        <title>unlike</title>
+                        </svg>
+                        </a>
+                {% else %}
+                        <a href="{{ url_for('add_favorite',book_id=book.id) }}">
+                        <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        <title>like</title>
+                        </svg>
+                        </a>
+                {% endif %}
+        </div>
+        {% endif %}
     <div class="card-body">
             <h5 class="card-text card-footer">
                     Auteur : {{ book.author }}
@@ -17,6 +50,85 @@
             <h6 class="card-text card-footer">
                 Prix : {{ book.price }} €
         </h6>
+        <h6 class="card-text card-footer">
+                Note : {{ moyenne }}
+        </h6>
     </div>
 </div>
+<section>
+        {% if current_user.is_authenticated %}
+                {% if book.has_commented(current_user) and edit == False %}
+                        <section class="commentaire">
+                                <div id="ur_com">
+                                        <h3>Your comment:</h3>
+                                        <a href="{{ url_for('detail', id=book.id, edit=True) }}">
+                                                <svg role="img" aria-label="[title]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>
+                                                <title>edit comment</title>
+                                                </svg>
+                                        </a>
+                                        <a href="{{ url_for('detail', id=book.id, suppr=True) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+                                                <title>del comment</title>
+                                                </svg>
+                                        </a>
+                                        <div>
+                                        {%if book.get_comment(current_user).note%}   
+                                                {% for i in range(1,6) %}
+                                                        {% if i <= book.get_comment(current_user).note %}
+                                                                <i style="color:yellow;" >★</i>
+                                                        {% else %}
+                                                                <i>★</i>
+                                                        {% endif %}
+
+                                                {% endfor %}
+                                        {% endif %}
+
+                                        </div>
+                                </div>
+                                <p> {{ book.get_comment(current_user).comment }} </p>
+                        </section>
+                {% else %}
+                        <section class="commentaire">
+                                <h3>Add a comment:</h3>
+                                <form method="POST" action="{{ url_for('detail', id=book.id, edit=False)}}">
+                                        {{form.hidden_tag()}}
+                                        <div>{{ form.comment(size =50, class_="form-control",
+                                        placeholder ="Comment") }}
+                                        <button type="submit" class="btn btn-default">Post</button>
+                                </div>
+                                </form>
+                        </section>
+                {% endif %}
+        {% endif %}
+        <h3>Comments:</h3>
+
+        {% for x in book.book_comment %}
+                {% if not book.get_comment(current_user) == x %}
+                <section class="commentaire">
+                        <div style="display: flex; ">
+                                <a href="{{ url_for('see_favorite', username=x.user.username)}}">
+                                        <h5 style="padding-right: 10px;">{{ x.user }}</h5>
+                                </a>
+                                {%if x.note%}   
+                                
+                                        {% for i in range(1,6) %}
+                                                {% if i <= x.note %}
+                                                        <i style="color:yellow;" >★</i>
+                                                {% else %}
+                                                        <i>★</i>
+                                                {% endif %}
+
+                                        {% endfor %}
+                                {% endif %}
+
+                                </div>
+                        {%if x.comment%}   
+                        <p>{{x.comment}}</p>
+
+                        {% endif %}
+                                        
+                </section>
+                {% endif %}
+        {% endfor %}
+</section>
 {% endblock %}
