@@ -65,6 +65,11 @@ class Comment(db.Model):
     note = db.Column(db.Integer,default=None)
     user = db.relationship("User", back_populates="user_comment")
     book = db.relationship("Book", back_populates="book_comment")
+    
+    __table_args__ = (
+        db.CheckConstraint('note between 1 and 5', name='check -note'),
+        {}
+    )
 
 # Get
 
