@@ -106,7 +106,9 @@
                 {% if not book.get_comment(current_user) == x %}
                 <section class="commentaire">
                         <div style="display: flex; ">
-                                <h5 style="padding-right: 10px;">{{ x.user }}</h5>
+                                <a href="{{ url_for('see_favorite', username=x.user.username)}}">
+                                        <h5 style="padding-right: 10px;">{{ x.user }}</h5>
+                                </a>
                                 {%if x.note%}   
                                 
                                         {% for i in range(1,6) %}
